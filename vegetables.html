@@ -3,160 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Prices & Ordering | Samansiri Stores</title>
+    <title>Live Market | Samansiri Stores</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --market: #27ae60; --bg: #f8fafc; --dark-green: #1b4332; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; }
-        
-        .header { background: linear-gradient(135deg, #1b4332, #2d6a4f); color: white; padding: 60px 20px; text-align: center; }
-        .update-box { background: rgba(255,255,255,0.1); display: inline-block; padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; margin-bottom: 20px; }
-        
-        .container { max-width: 900px; margin: -40px auto 0; padding: 0 20px; }
-        .search-bar { width: 100%; padding: 20px 30px; border-radius: 15px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); font-size: 1.1rem; outline: none; margin-bottom: 30px; }
-        
-        /* Product Cards */
-        .p-card { 
-            background: white; padding: 20px; border-radius: 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
-            border-left: 6px solid var(--market); transition: 0.3s;
-        }
-        .v-name h3 { margin: 0; font-size: 1.2rem; color: #1a1a2e; }
-        
-        /* Ordering Inputs */
-        .order-controls { display: flex; align-items: center; gap: 10px; }
-        .qty-input { 
-            width: 80px; padding: 10px; border: 1px solid #ddd; 
-            border-radius: 10px; text-align: center; font-weight: 600;
-        }
-        .add-btn { 
-            background: var(--market); color: white; border: none; 
-            padding: 10px 20px; border-radius: 10px; cursor: pointer; 
-            font-weight: 600; transition: 0.2s;
-        }
-        .add-btn:hover { background: #219150; transform: scale(1.05); }
-
-        /* Floating Cart Bar */
-        .cart-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 600px; background: var(--dark-green); color: white;
-            padding: 15px 25px; border-radius: 50px; display: none;
-            justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000;
-            animation: slideUp 0.4s ease;
-        }
-        .btn-whatsapp { 
-            background: #25D366; color: white; padding: 10px 25px; 
-            border-radius: 30px; text-decoration: none; font-weight: 700; 
-            font-size: 0.9rem; border: none; cursor: pointer;
-        }
-
-        @keyframes slideUp { from { bottom: -100px; } to { bottom: 20px; } }
-        
-        @media (max-width: 600px) {
-            .p-card { flex-direction: column; text-align: center; gap: 15px; }
-        }
+        :root { --market: #27ae60; --bg: #f8fafc; --dark: #1b4332; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 120px; }
+        .header { background: linear-gradient(135deg, #1b4332, #2d6a4f); color: white; padding: 40px 20px; text-align: center; }
+        .container { max-width: 800px; margin: -30px auto 0; padding: 0 20px; }
+        .search-bar { width: 100%; padding: 15px 25px; border-radius: 15px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-size: 1rem; outline: none; margin-bottom: 20px; box-sizing: border-box; }
+        .p-card { background: white; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .v-info h3 { margin: 0; color: #1a1a2e; }
+        .order-box { display: flex; align-items: center; gap: 10px; }
+        .qty-input { width: 60px; padding: 8px; border-radius: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; }
+        .add-btn { background: var(--market); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--dark); color: white; padding: 15px 25px; border-radius: 50px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 1000; }
+        .whatsapp-btn { background: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: 700; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="update-box" id="time">Updated: Just Now</div>
-        <h1>Wholesale Ordering</h1>
-        <p>Shop No. 166 | Katugasthota Economic Center</p>
-        <a href="index.html" style="color:white; text-decoration:none; opacity:0.7">← Back to Home</a>
+        <div id="time" style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 10px;">Syncing...</div>
+        <h1>Wholesale Price List</h1>
     </div>
 
     <div class="container">
-        <input type="text" class="search-bar" id="search" placeholder="Search vegetables (e.g. Carrot)..." onkeyup="filter()">
-        
+        <input type="text" id="search" class="search-bar" placeholder="Search for vegetables..." onkeyup="filterList()">
         <div id="priceList"></div>
     </div>
 
     <div id="cartBar" class="cart-bar">
-        <div>
-            <i class="fas fa-shopping-basket"></i> 
-            <span id="itemCount" style="font-weight: 800; margin-left: 5px;">0</span> Items in List
-        </div>
-        <button class="btn-whatsapp" onclick="sendOrder()">
-            <i class="fab fa-whatsapp"></i> Send Order Now
-        </button>
+        <div><i class="fas fa-shopping-basket"></i> <span id="itemCount">0</span> Items</div>
+        <button class="whatsapp-btn" onclick="sendOrder()"><i class="fab fa-whatsapp"></i> Send Order</button>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script>
-        let shoppingList = [];
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeM9w9yDIXNVxn4astQ63a67pyjgBEHG0",
+            authDomain: "samansiriholdings.firebaseapp.com",
+            projectId: "samansiriholdings",
+            storageBucket: "samansiriholdings.firebasestorage.app",
+            messagingSenderId: "1087597234688",
+            appId: "1:1087597234688:web:b80c8173d7c34d5dc6a6e5",
+            databaseURL: "https://samansiriholdings-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let cart = {};
 
-        function load(){
-            let data = JSON.parse(localStorage.getItem('vegData') || '[]');
-            document.getElementById('time').innerText = "Last Update: " + (localStorage.getItem('vLastUpdate') || 'N/A');
-            
-            const listContainer = document.getElementById('priceList');
-            
-            if(data.length === 0) {
-                listContainer.innerHTML = "<h3 style='text-align:center; color:#888; margin-top:50px;'>No items available today.</h3>";
-                return;
+        db.ref('vegData').on('value', (snapshot) => {
+            const data = snapshot.val();
+            let html = "";
+            for (let id in data) {
+                let i = data[id];
+                html += `
+                    <div class="p-card">
+                        <div class="v-info"><h3>${i.n}</h3><span style="color:var(--market); font-weight:800;">Rs. ${i.p}.00</span></div>
+                        <div class="order-box">
+                            <input type="number" id="qty-${id}" class="qty-input" placeholder="kg">
+                            <button class="add-btn" onclick="addToCart('${id}', '${i.n}', ${i.p})">Add</button>
+                        </div>
+                    </div>`;
             }
+            document.getElementById('priceList').innerHTML = html;
+        });
 
-            listContainer.innerHTML = data.map((item, index) => `
-                <div class="p-card">
-                    <div class="v-name">
-                        <h3>${item.n}</h3>
-                        <small style="color:var(--market); font-weight:600">Rs. ${item.p}.00 per kg</small>
-                    </div>
-                    <div class="order-controls">
-                        <input type="number" id="qty-${index}" class="qty-input" placeholder="kg" min="1">
-                        <button class="add-btn" onclick="addToOrder('${item.n}', ${index})">Add</button>
-                    </div>
-                </div>`).join('');
+        function filterList() {
+            let q = document.getElementById('search').value.toLowerCase();
+            document.querySelectorAll('.p-card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+            });
         }
 
-        function addToOrder(name, index) {
-            const qtyInput = document.getElementById(`qty-${index}`);
-            const qty = qtyInput.value;
-
-            if(!qty || qty <= 0) {
-                alert("Please enter the number of Kilograms.");
-                return;
-            }
-
-            // Add item to list
-            shoppingList.push({ name: name, weight: qty });
-
-            // Update UI
+        function addToCart(id, name, price) {
+            let qty = document.getElementById(`qty-${id}`).value;
+            if (!qty || qty <= 0) return alert("Enter quantity");
+            cart[id] = { name, price, qty };
             document.getElementById('cartBar').style.display = 'flex';
-            document.getElementById('itemCount').innerText = shoppingList.length;
-            
-            // Clear input and show feedback
-            qtyInput.value = '';
-            qtyInput.placeholder = "Added!";
-            setTimeout(() => { qtyInput.placeholder = "kg"; }, 1500);
+            document.getElementById('itemCount').innerText = Object.keys(cart).length;
         }
 
         function sendOrder() {
-            if(shoppingList.length === 0) return;
-
-            // Format the message for WhatsApp
-            let message = "Hello Samansiri Stores, I'd like to place a Wholesale Order:%0A%0A";
-            
-            shoppingList.forEach((item, i) => {
-                message += `${i+1}. ${item.name} - ${item.weight}kg%0A`;
-            });
-
-            message += "%0A*Please let me know the total price and pickup time.*";
-
-            // Open WhatsApp (Replace with your actual business number)
-            window.location.href = `https://wa.me/94777105620?text=${message}`;
+            let text = "📦 *NEW ORDER - SAMANSIRI*%0A";
+            let total = 0;
+            for (let id in cart) {
+                let item = cart[id];
+                text += `• ${item.name}: ${item.qty}kg - Rs.${item.price * item.qty}%0A`;
+                total += (item.price * item.qty);
+            }
+            text += `%0A💰 *TOTAL: Rs.${total}.00*`;
+            window.open(`https://wa.me/94777105620?text=${text}`, '_blank');
         }
-
-        function filter(){
-            let q = document.getElementById('search').value.toLowerCase();
-            document.querySelectorAll('.p-card').forEach(c => {
-                c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
-            });
-        }
-
-        window.onload = load;
     </script>
 </body>
 </html>
