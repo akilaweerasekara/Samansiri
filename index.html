@@ -10,17 +10,14 @@
     <style>
         /* --- VARIABLES & RESET --- */
         :root {
-            --primary-green: #2ecc71;
-            --primary-blue: #3498db;
-            --dark-text: #2c3e50;
-            --light-bg: #f4f6f7;
-            --glass: rgba(255, 255, 255, 0.9);
+            --primary-green: #00ff88; /* Upgraded to a futuristic neon green */
+            --primary-blue: #00d4ff;  /* Upgraded to a neon cyan */
+            --dark-bg: #0b0f19;
+            --dark-text: #1a1a2e;
+            --light-bg: #f8f9fa;
         }
 
-        * {
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-        }
+        * { box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
             margin: 0;
@@ -30,322 +27,394 @@
             overflow-x: hidden;
         }
 
-        /* --- NAVIGATION --- */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); /* Frosted Glass Effect */
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: 0.3s;
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--dark-bg); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #333;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            margin-left: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
+        .loader-logo {
+            font-size: 3.5rem; font-weight: 800; letter-spacing: 5px;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
             position: relative;
         }
+
+        .loader-logo::before {
+            content: "SAMANSIRI";
+            position: absolute; left: 0; top: 0;
+            width: 0%; height: 100%; color: var(--primary-green);
+            -webkit-text-stroke: 1px var(--primary-green);
+            overflow: hidden; white-space: nowrap;
+            animation: fillLogo 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            filter: drop-shadow(0 0 15px var(--primary-green));
+        }
+
+        @keyframes fillLogo {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* --- MODERN NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: transparent; z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        nav.scrolled {
+            padding: 15px 50px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        nav .logo {
+            font-size: 1.5rem; font-weight: 800; color: white;
+            letter-spacing: 2px; transition: color 0.4s;
+        }
+        nav.scrolled .logo { color: var(--dark-text); }
+        
+        .nav-links a {
+            text-decoration: none; color: white; margin-left: 35px;
+            font-weight: 600; font-size: 0.95rem; position: relative; transition: color 0.4s;
+        }
+        nav.scrolled .nav-links a { color: var(--dark-text); }
 
         .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--primary-green);
-            transition: width 0.3s;
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -5px; left: 0; background-color: #2ecc71;
+            transition: width 0.3s ease;
         }
+        .nav-links a:hover::after { width: 100%; }
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* --- HERO SECTION --- */
+        /* --- CINEMATIC HERO SECTION --- */
         .hero {
-            height: 100vh;
-            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('hero-image.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed; /* Parallax */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            position: relative;
+            height: 100vh; position: relative;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; overflow: hidden;
+            background-color: var(--dark-bg);
         }
 
-        .hero-content {
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('hero-image.jpg');
+            background-size: cover; background-position: center;
+            animation: zoomInOut 25s infinite alternate linear;
+            z-index: 1; opacity: 0.7;
+        }
+
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(11, 15, 25, 0.3) 0%, rgba(11, 15, 25, 0.9) 100%);
             z-index: 2;
         }
 
+        .hero-content { z-index: 3; padding: 0 20px; }
+
         .hero h1 {
-            font-size: 5rem;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            animation: slideInDown 1.5s ease-out;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            font-size: clamp(3rem, 8vw, 6.5rem); margin: 0;
+            text-transform: uppercase; letter-spacing: 4px;
+            text-shadow: 0 10px 40px rgba(0,255,136,0.3);
+            opacity: 0; transform: translateY(30px);
+            animation: fadeUp 1s cubic-bezier(0.4, 0, 0.2, 1) 2.2s forwards; /* Waits for preloader */
         }
 
-        .hero p {
-            font-size: 1.5rem;
-            margin-top: 10px;
-            font-weight: 300;
-            animation: fadeIn 2.5s ease-out;
+        .typewriter {
+            font-size: clamp(1.2rem, 3vw, 1.8rem); margin-top: 15px; font-weight: 300;
+            display: inline-block; overflow: hidden; white-space: nowrap;
+            border-right: 3px solid var(--primary-green);
+            width: 0;
+            animation: typing 2s steps(40, end) 2.8s forwards, blink 0.75s step-end infinite;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        .scroll-down {
-            position: absolute;
-            bottom: 30px;
-            animation: bounce 2s infinite;
-            font-size: 2rem;
-            color: white;
-            opacity: 0.8;
+        /* --- SCROLL REVEAL UTILITY --- */
+        .reveal {
+            opacity: 0; transform: translateY(80px) scale(0.95);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* --- FOUNDER SECTION (Professional Card) --- */
+        /* --- FOUNDER SECTION --- */
         .founder-section {
-            padding: 80px 20px;
-            background: white;
-            display: flex;
-            justify-content: center;
+            padding: 120px 20px; background: white;
+            display: flex; justify-content: center; position: relative;
         }
 
         .founder-card {
-            background: white;
-            width: 100%;
-            max-width: 900px;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            opacity: 0; /* Hidden initially for animation */
-            transform: translateY(50px);
-            transition: all 1s ease;
+            background: white; width: 100%; max-width: 1050px;
+            padding: 60px; border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 50px;
+            border: 1px solid rgba(0,0,0,0.02);
+            position: relative; overflow: hidden;
         }
 
-        .founder-card.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .founder-image-wrapper {
+            flex: 0 0 300px; height: 300px; border-radius: 50%;
+            overflow: hidden; border: 10px solid white;
+            box-shadow: 0 20px 50px rgba(46,204,113,0.3);
+            position: relative; z-index: 1;
+            transition: transform 0.5s ease;
         }
+        .founder-card:hover .founder-image-wrapper { transform: scale(1.05) rotate(2deg); }
+        .founder-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .founder-info { flex: 1; z-index: 1; }
 
         .badge {
-            background: var(--primary-green);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            display: inline-block;
-            margin-bottom: 15px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60); color: white;
+            padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; font-weight: 800;
+            letter-spacing: 2px; text-transform: uppercase; display: inline-block; margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(46,204,113,0.3);
         }
 
-        /* --- DUAL BUSINESS SECTION --- */
-        .business-section {
-            display: flex;
-            flex-wrap: wrap;
-            min-height: 80vh;
+        .quote-text {
+            font-size: 1.3rem; line-height: 1.8; color: #555; font-style: italic;
+            border-left: 5px solid #2ecc71; padding-left: 25px; margin-bottom: 30px;
         }
+
+        /* --- 3D SERVICES SECTION --- */
+        .business-section { display: flex; flex-wrap: wrap; background: var(--dark-bg); color: white; }
 
         .biz-box {
-            flex: 1;
-            min-width: 350px;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
+            flex: 1; min-width: 350px; padding: 100px 50px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; position: relative; overflow: hidden;
+            /* 3D Transform properties */
+            transform-style: preserve-3d;
+            transition: transform 0.1s; /* Quick transition for JS mousemove */
             cursor: pointer;
         }
 
-        /* Veg Style */
-        .biz-veg {
-            background: linear-gradient(135deg, #ffffff 0%, #e9f7ef 100%);
-            border-right: 1px solid #eee;
-        }
-        .biz-veg:hover {
-            background: #d4efdf;
-        }
-        .biz-veg i { color: var(--primary-green); }
+        .biz-veg { background: linear-gradient(135deg, rgba(11,15,25,1) 0%, rgba(20,35,25,1) 100%); border-right: 1px solid rgba(255,255,255,0.05); }
+        .biz-trans { background: linear-gradient(135deg, rgba(11,15,25,1) 0%, rgba(15,30,45,1) 100%); }
 
-        /* Transport Style */
-        .biz-trans {
-            background: linear-gradient(135deg, #ffffff 0%, #ebf5fb 100%);
-        }
-        .biz-trans:hover {
-            background: #d6eaf8;
-        }
-        .biz-trans i { color: var(--primary-blue); }
-
-        /* Common Box Styles */
-        .biz-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            transition: transform 0.3s;
+        .icon-wrapper {
+            width: 120px; height: 120px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; margin-bottom: 30px;
+            transform: translateZ(50px); /* Pops out in 3D */
+            transition: box-shadow 0.4s ease;
         }
         
-        .biz-box:hover .biz-icon {
-            transform: scale(1.2) rotate(5deg);
-        }
+        .biz-veg .icon-wrapper { background: rgba(0,255,136,0.1); color: var(--primary-green); box-shadow: 0 0 30px rgba(0,255,136,0.2); }
+        .biz-trans .icon-wrapper { background: rgba(0,212,255,0.1); color: var(--primary-blue); box-shadow: 0 0 30px rgba(0,212,255,0.2); }
 
-        .biz-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: #333;
-        }
+        .biz-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; transform: translateZ(30px); }
+        .biz-desc { color: #94a3b8; max-width: 400px; margin-bottom: 30px; line-height: 1.7; transform: translateZ(20px); }
 
         .cta-button {
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: #333;
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s;
+            margin-top: 40px; padding: 18px 45px; color: white; text-decoration: none; border-radius: 50px;
+            font-weight: 700; font-size: 1.1rem; letter-spacing: 1px;
+            transform: translateZ(40px); /* Pops out */
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
+        
+        .btn-veg { background: #2ecc71; box-shadow: 0 10px 30px rgba(46,204,113,0.3); }
+        .btn-trans { background: #3498db; box-shadow: 0 10px 30px rgba(52,152,219,0.3); }
+        .cta-button:hover { filter: brightness(1.2); transform: translateZ(50px) scale(1.05); }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        /* --- LIVE STATS SECTION --- */
+        .stats-section {
+            background: #fff; padding: 80px 20px;
+            display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center;
         }
+        .stat-box { margin: 20px; }
+        .stat-number { font-size: 4rem; font-weight: 800; color: #2ecc71; margin: 0; line-height: 1; }
+        .stat-label { font-size: 1.1rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
 
         /* --- FOOTER --- */
-        footer {
-            background: #222;
-            color: white;
-            padding: 40px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
+        footer { background: #0b0f19; color: #94a3b8; padding: 60px 20px; text-align: center; }
 
-        /* --- KEYFRAME ANIMATIONS --- */
-        @keyframes slideInDown {
-            from { transform: translateY(-100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-20px);}
-            60% {transform: translateY(-10px);}
-        }
+        /* --- ANIMATIONS --- */
+        @keyframes zoomInOut { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { 50% { border-color: transparent } }
 
-        /* Mobile Adjustments */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.8rem; }
-            nav { padding: 15px 20px; }
-            .nav-links { display: none; } /* Hide links on mobile for simplicity */
-            .business-section { flex-direction: column; }
+        @media (max-width: 850px) {
+            nav { padding: 20px; }
+            nav.scrolled { padding: 15px 20px; }
+            nav .logo { color: var(--dark-text); }
+            .nav-links { display: none; }
+            .founder-card { flex-direction: column; padding: 40px 20px; text-align: center; border-radius: 20px; }
+            .quote-text { border-left: none; border-top: 4px solid #2ecc71; padding: 20px 0 0 0; }
+            .typewriter { font-size: 1rem; white-space: normal; border-right: none; animation: none; width: auto; opacity: 0; animation: fadeUp 1s forwards 2.8s;}
+            .biz-box { transform: none !important; } /* Disable 3D on mobile */
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">SAMANSIRI<span style="color:var(--primary-green)">Holdings</span></div>
+    <div id="preloader">
+        <div class="loader-logo"></div>
+    </div>
+
+    <nav id="navbar">
+        <div class="logo">SAMANSIRI<span style="color:#2ecc71">Holdings</span></div>
         <div class="nav-links">
             <a href="#">Home</a>
-            <a href="#about">About Founder</a>
+            <a href="#about">About</a>
             <a href="#services">Services</a>
             <a href="#contact">Contact</a>
         </div>
     </nav>
 
     <header class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1>Samansiri Holdings</h1>
-            <p>Fruits & Vegetables Whole Sale Dealers & Luxury Transport</p>
-            <p style="font-size: 1rem; opacity: 0.8;">Kandy - Sri Lanka</p>
+            <h1>Samansiri</h1>
+            <div class="typewriter">Excellence in Agriculture & Logistics</div>
         </div>
-        <div class="scroll-down">
-            <i class="fas fa-chevron-down"></i>
+        <div class="scroll-down" style="z-index: 3; position:absolute; bottom:40px; animation: fadeUp 1s forwards 3.5s; opacity:0;">
+            <i class="fas fa-chevron-down" style="font-size: 2rem; color:var(--primary-green)"></i>
         </div>
     </header>
 
     <section id="about" class="founder-section">
-        <div class="founder-card" id="founderCard">
-            <div class="badge">Chairman's Message</div>
-            <h2 style="font-size: 2.5rem; margin: 10px 0;">Mr. Saman Weerasekara</h2>
-            <h3 style="color: #7f8c8d; font-weight: 400;">Justice of the Peace (All Island)</h3>
-            <hr style="width: 50px; border: 2px solid var(--primary-green); margin: 20px auto;">
-            <p style="font-size: 1.1rem; line-height: 1.8; color: #555;">
-                "Since 1992, we have built our legacy on trust. Whether we are transporting passengers safely to their destination or providing the freshest fruits and vegetables to the nation, the Samansiri name stands for quality and integrity."
-            </p>
+        <div class="founder-card reveal">
+            <div class="founder-image-wrapper">
+                <img src="chairman.png" alt="Mr. Saman Weerasekara">
+            </div>
+            <div class="founder-info">
+                <div class="badge">Chairman's Message</div>
+                <h2 style="font-size: 2.5rem; margin: 0 0 5px 0; color: var(--dark-text);">Mr. Saman Weerasekara</h2>
+                <h3 style="color: #64748b; font-weight: 400; margin-bottom: 35px; font-size: 1.1rem;">Justice of the Peace (All Island)</h3>
+                <p class="quote-text">
+                    "Since 1992, we have built our legacy on trust. Whether we are transporting passengers safely to their destination or providing the freshest fruits and vegetables to the nation, the Samansiri name stands for quality and integrity."
+                </p>
+            </div>
         </div>
     </section>
 
     <section id="services" class="business-section">
-        
-        <div class="biz-box biz-veg">
-            <i class="fas fa-leaf biz-icon"></i>
+        <div class="biz-box biz-veg reveal">
+            <div class="icon-wrapper"><i class="fas fa-leaf"></i></div>
             <div class="biz-title">Samansiri Stores</div>
-            <p>Shop No. 166 | Manikkubura Economic Center</p>
-            <p style="color: #666; max-width: 300px; margin-bottom: 20px;">
-                Wholesale distribution of vegetables and fruits. Best market prices for bulk buyers.
+            <p class="biz-desc">
+                Wholesale distribution of premium vegetables and fruits. We guarantee the best market prices for bulk buyers and farmers alike.
             </p>
-            <a href="vegetables.html" class="cta-button" style="background-color: var(--primary-green);">Check Today's Prices</a>
+            <a href="vegetables.html" class="cta-button btn-veg">View Live Market</a>
         </div>
 
-        <div class="biz-box biz-trans">
-            <i class="fas fa-bus biz-icon"></i>
+        <div class="biz-box biz-trans reveal">
+            <div class="icon-wrapper"><i class="fas fa-bus"></i></div>
             <div class="biz-title">Samansiri Travels</div>
-            <p>Luxury Bus Service & Vehicle Hiring</p>
-            <p style="color: #666; max-width: 300px; margin-bottom: 20px;">
-                Operating the popular Alwathugoda-Kandy route. Available for weddings, trips, and hires.
+            <p class="biz-desc">
+                Operating the popular Alwathugoda-Kandy route. Our fleet is available for weddings, corporate trips, and heavy logistics.
             </p>
-            <a href="transport.html" class="cta-button" style="background-color: var(--primary-blue);">Book a Ride</a>
+            <a href="transport.html" class="cta-button btn-trans">Book Your Ride</a>
         </div>
+    </section>
 
+    <section class="stats-section reveal">
+        <div class="stat-box">
+            <div class="stat-number" data-target="34">0</div>
+            <div class="stat-label">Years of Trust</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" data-target="15000">0</div>
+            <div class="stat-label">Happy Clients</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" data-target="166">0</div>
+            <div class="stat-label">Shop Number</div>
+        </div>
     </section>
 
     <footer id="contact">
-        <p>Copyright © 2026 Samansiri Holdings. All Rights Reserved.</p>
-        <p>Contact: +94 77 710 620 | Kandy, Sri Lanka</p>
+        <h2 style="color: white; margin-bottom: 10px;">SAMANSIRI HOLDINGS</h2>
+        <p style="margin-bottom: 30px;">Setting the standard in Agriculture & Transport since 1992.</p>
+        <p><i class="fas fa-phone"></i> +94 77 710 620 &nbsp; | &nbsp; <i class="fas fa-map-marker-alt"></i> Kandy, Sri Lanka</p>
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem;">
+            Copyright © 2026 Samansiri Holdings. All Rights Reserved.
+        </div>
     </footer>
 
     <script>
-        // This script detects when the Founder Section comes into view
-        window.addEventListener('scroll', function() {
-            var founderCard = document.getElementById('founderCard');
-            var position = founderCard.getBoundingClientRect().top;
-            var screenPosition = window.innerHeight / 1.3;
-
-            if(position < screenPosition) {
-                founderCard.classList.add('visible');
-            }
+        // --- 1. PRELOADER LOGIC ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const preloader = document.getElementById('preloader');
+                preloader.style.opacity = '0';
+                setTimeout(() => { preloader.style.visibility = 'hidden'; }, 800);
+            }, 2000); // 2 second cinematic intro
         });
-    </script>
 
+        // --- 2. DYNAMIC NAVBAR ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); } 
+            else { nav.classList.remove('scrolled'); }
+        });
+
+        // --- 3. ADVANCED 3D HOVER PHYSICS FOR SERVICE CARDS ---
+        // This makes the cards tilt towards the user's mouse like a physical object
+        const cards = document.querySelectorAll('.biz-box');
+        
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                // Only run on desktop
+                if(window.innerWidth > 850) {
+                    let rect = card.getBoundingClientRect();
+                    let x = e.clientX - rect.left - rect.width / 2;
+                    let y = e.clientY - rect.top - rect.height / 2;
+                    
+                    // The math for the 3D tilt
+                    card.style.transform = `perspective(1000px) rotateX(${-y / 15}deg) rotateY(${x / 15}deg) scale3d(1.02, 1.02, 1.02)`;
+                }
+            });
+            
+            // Reset when mouse leaves
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                card.style.transition = `transform 0.5s ease`; // Smooth snap back
+                setTimeout(() => { card.style.transition = `transform 0.1s`; }, 500); // Reset transition for next hover
+            });
+        });
+
+        // --- 4. SCROLL REVEAL & STATS COUNTER ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const statNumbers = document.querySelectorAll('.stat-number');
+        let statsAnimated = false;
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    
+                    // Trigger number counter if it's the stats section
+                    if(entry.target.classList.contains('stats-section') && !statsAnimated) {
+                        statsAnimated = true;
+                        statNumbers.forEach(stat => {
+                            const target = +stat.getAttribute('data-target');
+                            const increment = target / 100;
+                            let current = 0;
+                            
+                            const updateCounter = () => {
+                                current += increment;
+                                if(current < target) {
+                                    stat.innerText = Math.ceil(current).toLocaleString();
+                                    setTimeout(updateCounter, 20);
+                                } else {
+                                    stat.innerText = target.toLocaleString() + (target === 166 ? "" : "+");
+                                }
+                            };
+                            updateCounter();
+                        });
+                    }
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+        revealElements.forEach(el => revealOnScroll.observe(el));
+    </script>
 </body>
 </html>
