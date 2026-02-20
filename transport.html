@@ -3,108 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleet & Hires | Samansiri Travels</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+    <title>Transport Booking | Samansiri Group</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --blue: #2980b9; --dark: #1a1a2e; }
-        body { font-family: 'Poppins', sans-serif; background: #fdfdfd; margin: 0; }
-        .hero { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-image.jpg'); background-size: cover; padding: 100px 20px; text-align: center; color: white; }
-        .container { max-width: 1100px; margin: 50px auto; padding: 0 20px; }
-        .section-title { text-align: center; margin-bottom: 40px; }
-        .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 80px; }
-        .vehicle-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .vehicle-card img { width: 100%; height: 220px; object-fit: cover; }
-        .v-content { padding: 25px; }
-        .booking-calendar { background: white; border-radius: 25px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); margin-bottom: 50px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; border-bottom: 2px solid #eee; }
-        td { padding: 20px 15px; border-bottom: 1px solid #f9f9f9; }
-        .status-tag { background: #fee2e2; color: #ef4444; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
-        .check-box { background: #ebf5fb; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px; border: 2px dashed var(--blue); }
-        .input-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
-        input { padding: 12px; border-radius: 10px; border: 1px solid #ddd; }
-        .btn-check { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        :root { --primary: #2980b9; --success: #27ae60; --danger: #e74c3c; --dark: #1a1a2e; }
+        body { font-family: 'Poppins', sans-serif; background: #f4f7f6; margin: 0; }
+        .header { background: var(--dark); color: white; padding: 60px 20px; text-align: center; }
+        .container { max-width: 450px; margin: -40px auto 50px; padding: 0 20px; }
+        .booking-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 6px solid var(--primary); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; font-size: 0.9rem; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; font-family: inherit; }
+        input:focus { border-color: var(--primary); outline: none; }
+        .btn-book { background: var(--success); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+        .btn-book:hover { background: #219150; transform: translateY(-2px); }
+        .status-msg { margin-top: 20px; text-align: center; font-weight: 600; display: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; border: 1px solid transparent; }
+        .error { background: #fee2e2; color: #dc2626; border-color: #f87171; display: block; }
+        .loading { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; display: block; }
+        .available { background: #dcfce7; color: #15803d; border-color: #86efac; display: block; }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>Premium Fleet Services</h1>
-        <p>Luxury Travel & Reliable Logistics Across Sri Lanka</p>
-        <a href="index.html" style="color:white; text-decoration:none; opacity:0.7">← Back to Home</a>
+
+    <div class="header">
+        <h1>Book Our Fleet</h1>
+        <p>Instant Availability Check</p>
     </div>
 
     <div class="container">
-        <div class="check-box">
-            <h3><i class="fas fa-calendar-check"></i> Check Instant Availability</h3>
-            <p>Select your date and destination to see if we are free for a hire.</p>
+        <div class="booking-card">
             <div class="input-group">
-                <input type="date" id="checkDate">
-                <input type="text" id="checkDest" placeholder="Destination (e.g. Ella)">
-                <button class="btn-check" onclick="verifyBooking()">Check Availability</button>
+                <label><i class="fas fa-calendar-day"></i> Select Your Date</label>
+                <input type="date" id="checkDate" onchange="clearStatus()">
             </div>
-            <div id="checkResult" style="margin-top: 20px; font-weight: 600;"></div>
-        </div>
+            <div class="input-group">
+                <label><i class="fas fa-route"></i> Destination / Route</label>
+                <input type="text" id="routeDetails" placeholder="e.g. Kandy to Colombo" oninput="clearStatus()">
+            </div>
+            
+            <div id="statusBox" class="status-msg"></div>
 
-        <div class="fleet-grid">
-            <div class="vehicle-card">
-                <img src="bus1.jpg" alt="Mitsubishi Rosa">
-                <div class="v-content">
-                    <h3>Mitsubishi Rosa Luxury</h3>
-                    <p>29 Seater, Full A/C, Adjustable Seats. Perfect for Weddings & Family Trips.</p>
-                </div>
-            </div>
-            <div class="vehicle-card">
-                <img src="lorry1.jpg" alt="Lorry">
-                <div class="v-content">
-                    <h3>Heavy Duty Logistics</h3>
-                    <p>Reliable goods transport from Economic Centers to any destination.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="booking-calendar">
-            <div class="section-title">
-                <h2>Live Booking Calendar</h2>
-                <p>Dates currently reserved in our schedule</p>
-            </div>
-            <div id="hireDisplay"></div>
+            <button class="btn-book" onclick="checkAndBook()">
+                <i class="fab fa-whatsapp"></i> Book via WhatsApp
+            </button>
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
-        function verifyBooking() {
-            let d = document.getElementById('checkDate').value;
-            let dest = document.getElementById('checkDest').value;
-            let res = document.getElementById('checkResult');
-            if(!d || !dest) { res.innerHTML = "Please enter both date and destination."; return; }
+        // Samansiri Belgium Database Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeM9w9yDIXNVxn4astQ63a67pyjgBEHG0",
+            authDomain: "samansiriholdings.firebaseapp.com",
+            projectId: "samansiriholdings",
+            storageBucket: "samansiriholdings.firebasestorage.app",
+            messagingSenderId: "1087597234688",
+            appId: "1:1087597234688:web:b80c8173d7c34d5dc6a6e5",
+            databaseURL: "https://samansiriholdings-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-            let hires = JSON.parse(localStorage.getItem('hireData') || '[]');
-            let isBooked = hires.some(h => h.d === d);
-
-            if(isBooked) {
-                res.innerHTML = `<span style="color:#e74c3c">❌ Sorry, we are booked on ${d}. Try another date!</span>`;
-            } else {
-                let waMsg = encodeURIComponent(`Hi Samansiri Travels, I checked your website. Is the date ${d} available for a hire to ${dest}?`);
-                res.innerHTML = `<span style="color:#27ae60">✅ We are AVAILABLE!</span><br><br>
-                <a href="https://wa.me/94777105620?text=${waMsg}" style="background:#25D366; color:white; padding:10px 20px; border-radius:10px; text-decoration:none;">Book via WhatsApp</a>`;
-            }
+        function clearStatus() {
+            const statusBox = document.getElementById('statusBox');
+            statusBox.style.display = 'none';
         }
 
-        function load(){
-            let hires = JSON.parse(localStorage.getItem('hireData') || '[]');
-            if(hires.length === 0){
-                document.getElementById('hireDisplay').innerHTML = "<h3 style='text-align:center; color:#27ae60;'>All dates are currently available!</h3>";
+        async function checkAndBook() {
+            const userDate = document.getElementById('checkDate').value;
+            const userRoute = document.getElementById('routeDetails').value;
+            const statusBox = document.getElementById('statusBox');
+
+            if (!userDate || !userRoute) {
+                alert("Please select a date and enter your destination.");
                 return;
             }
-            let html = `<table><thead><tr><th>Date</th><th>Route/Hire Detail</th><th>Availability</th></tr></thead><tbody>`;
-            hires.sort((a,b)=> new Date(a.d) - new Date(b.d)).forEach(h => {
-                html += `<tr><td><strong>${h.d}</strong></td><td>${h.ds}</td><td><span class="status-tag">RESERVED</span></td></tr>`;
-            });
-            html += `</tbody></table>`;
-            document.getElementById('hireDisplay').innerHTML = html;
+
+            // Show checking status
+            statusBox.innerHTML = "<i class='fas fa-search'></i> Checking availability...";
+            statusBox.className = "status-msg loading";
+            statusBox.style.display = "block";
+
+            try {
+                // 1. Fetch current bookings from Firebase
+                const snapshot = await db.ref('hireData').once('value');
+                const data = snapshot.val();
+                
+                let isBooked = false;
+
+                // 2. Loop through every single entry in the database
+                if (data) {
+                    Object.values(data).forEach(item => {
+                        // Check both common keys used in your admin files
+                        let dbDate = item.date || item.d;
+                        
+                        // Compare the database date with the user input
+                        if (dbDate === userDate) {
+                            isBooked = true;
+                        }
+                    });
+                }
+
+                // 3. Logic: Book or Block?
+                if (isBooked) {
+                    // BLOCK: Show error, do NOT open WhatsApp
+                    statusBox.innerHTML = `<i class="fas fa-times-circle"></i> We are sorry. ${userDate} is already BOOKED.`;
+                    statusBox.className = "status-msg error";
+                } else {
+                    // SUCCESS: Notify user and open WhatsApp
+                    statusBox.innerHTML = `<i class="fas fa-check-circle"></i> Date Available! Redirecting...`;
+                    statusBox.className = "status-msg available";
+
+                    setTimeout(() => {
+                        const phone = "94777105620";
+                        const msg = `🚛 *VEHICLE BOOKING REQUEST*%0A*Date:* ${userDate}%0A*Route:* ${userRoute}%0A%0AThe website confirmed this date is available.`;
+                        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+                    }, 800);
+                }
+
+            } catch (error) {
+                console.error(error);
+                statusBox.innerHTML = "⚠️ Connection Error. Please try again.";
+                statusBox.className = "status-msg error";
+            }
         }
-        window.onload = load;
     </script>
 </body>
 </html>
