@@ -12,25 +12,26 @@
         .sidebar { width: 260px; background: var(--dark); height: 100vh; color: white; padding: 30px 20px; position: fixed; }
         .sidebar h2 { color: var(--primary); font-weight: 800; margin-bottom: 40px; }
         .nav-item { padding: 15px; cursor: pointer; border-radius: 12px; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-        .nav-item.active { background: var(--primary); box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4); }
-        .main { margin-left: 280px; padding: 40px; width: 100%; }
+        .nav-item.active { background: var(--primary); }
+        .main { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
         .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; }
         input, select { padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-right: 10px; }
         .btn-add { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: 600; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { text-align: left; padding: 15px; border-bottom: 1px solid #eee; }
+        .badge-up { color: #e74c3c; font-weight: bold; } .badge-down { color: #2ecc71; font-weight: bold; } .badge-stable { color: #95a5a6; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="sidebar">
         <h2>SAMANSIRI</h2>
-        <div class="nav-item active" onclick="showTab('veg')"><i class="fas fa-carrot"></i> Inventory</div>
-        <div class="nav-item" onclick="showTab('trans')"><i class="fas fa-calendar-check"></i> Fleet</div>
+        <div class="nav-item active" id="btn-veg" onclick="showTab('veg')"><i class="fas fa-carrot"></i> Inventory</div>
+        <div class="nav-item" id="btn-trans" onclick="showTab('trans')"><i class="fas fa-calendar-check"></i> Fleet</div>
         <a href="index.html" class="nav-item" style="text-decoration:none; color:white; margin-top:50px"><i class="fas fa-eye"></i> View Site</a>
     </div>
 
     <div class="main">
-        <div id="veg-tab" class="tab-content">
+        <div id="veg-tab">
             <h1>Update Vegetable Prices</h1>
             <div class="card">
                 <input type="text" id="vName" placeholder="Item Name">
@@ -40,62 +41,84 @@
                     <option value="up">Price Up ↑</option>
                     <option value="down">Price Down ↓</option>
                 </select>
-                <button class="btn-add" onclick="addItem()">Update Price</button>
+                <button class="btn-add" onclick="saveVeg()">Update Price</button>
             </div>
-            <div class="card"><table id="vTable"><thead><tr><th>Product</th><th>Price</th><th>Trend</th><th>Action</th></tr></thead><tbody id="vList"></tbody></table></div>
+            <div class="card"><table><thead><tr><th>Product</th><th>Price</th><th>Trend</th><th>Action</th></tr></thead><tbody id="vList"></tbody></table></div>
         </div>
 
-        <div id="trans-tab" class="tab-content" style="display:none;">
+        <div id="trans-tab" style="display:none;">
             <h1>Fleet Booking Manager</h1>
             <div class="card">
                 <input type="date" id="hDate">
                 <input type="text" id="hDesc" placeholder="Route/Hire Details">
-                <button class="btn-add" onclick="addHire()" style="background:var(--secondary)">Mark Booked</button>
+                <button class="btn-add" onclick="saveHire()" style="background:var(--secondary)">Mark Booked</button>
             </div>
-            <div class="card"><table id="hTable"><thead><tr><th>Date</th><th>Detail</th><th>Status</th><th>Action</th></tr></thead><tbody id="hList"></tbody></table></div>
+            <div class="card"><table><thead><tr><th>Date</th><th>Detail</th><th>Status</th><th>Action</th></tr></thead><tbody id="hList"></tbody></table></div>
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
-        function showTab(t){
-            document.querySelectorAll('.tab-content').forEach(el=>el.style.display='none');
-            document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-            document.getElementById(t+'-tab').style.display='block';
-            event.currentTarget.classList.add('active');
+        const firebaseConfig = {
+    apiKey: "AIzaSyCeM9w9yDIXNVxn4astQ63a67pyjgBEHG0",
+    authDomain: "samansiriholdings.firebaseapp.com",
+    projectId: "samansiriholdings",
+    storageBucket: "samansiriholdings.firebasestorage.app",
+    messagingSenderId: "1087597234688",
+    appId: "1:1087597234688:web:b80c8173d7c34d5dc6a6e5",
+    // This MUST match your Belgium location from the screenshot
+    databaseURL: "https://samansiriholdings-default-rtdb.europe-west1.firebasedatabase.app"
+};
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function showTab(type) {
+            document.getElementById('veg-tab').style.display = type === 'veg' ? 'block' : 'none';
+            document.getElementById('trans-tab').style.display = type === 'trans' ? 'block' : 'none';
         }
 
-        function addItem(){
+        function saveVeg() {
             let n = document.getElementById('vName').value, p = document.getElementById('vPrice').value, t = document.getElementById('vTrend').value;
-            if(!n || !p) return;
-            let items = JSON.parse(localStorage.getItem('vegData') || '[]');
-            items.push({n, p, t});
-            localStorage.setItem('vegData', JSON.stringify(items));
-            render();
+            if(!n || !p) return alert("Fill all fields");
+            db.ref('vegData').push({ n, p, t });
+            db.ref('vLastUpdate').set(new Date().toLocaleString());
+            document.getElementById('vName').value = ''; document.getElementById('vPrice').value = '';
         }
 
-        function addHire(){
+        db.ref('vegData').on('value', (snapshot) => {
+            const data = snapshot.val();
+            let html = "";
+            for (let id in data) {
+                html += `<tr><td>${data[id].n}</td><td>Rs. ${data[id].p}.00</td>
+                         <td><span class="badge-${data[id].t}">${data[id].t.toUpperCase()}</span></td>
+                         <td><i class="fas fa-trash" style="color:red; cursor:pointer" onclick="deleteVeg('${id}')"></i></td></tr>`;
+            }
+            document.getElementById('vList').innerHTML = html;
+        });
+
+        function deleteVeg(id) { db.ref('vegData').child(id).remove(); }
+
+        function saveHire() {
             let d = document.getElementById('hDate').value, ds = document.getElementById('hDesc').value;
-            if(!d || !ds) return;
-            let hires = JSON.parse(localStorage.getItem('hireData') || '[]');
-            hires.push({d, ds});
-            localStorage.setItem('hireData', JSON.stringify(hires));
-            render();
+            if(!d || !ds) return alert("Fill all fields");
+            db.ref('hireData').push({ d, ds });
         }
 
-        function remove(idx, key){
-            let data = JSON.parse(localStorage.getItem(key));
-            data.splice(idx,1);
-            localStorage.setItem(key, JSON.stringify(data));
-            render();
-        }
+        db.ref('hireData').on('value', (snapshot) => {
+            const data = snapshot.val();
+            let html = "";
+            for (let id in data) {
+                html += `<tr><td>${data[id].d}</td><td>${data[id].ds}</td>
+                         <td style="color:red; font-weight:bold">BOOKED</td>
+                         <td><i class="fas fa-trash" style="color:red; cursor:pointer" onclick="deleteHire('${id}')"></i></td></tr>`;
+            }
+            document.getElementById('hList').innerHTML = html;
+        });
 
-        function render(){
-            let v = JSON.parse(localStorage.getItem('vegData') || '[]');
-            document.getElementById('vList').innerHTML = v.map((item, i) => `<tr><td>${item.n}</td><td>Rs. ${item.p}</td><td>${item.t}</td><td><i class="fas fa-trash" style="color:red; cursor:pointer" onclick="remove(${i},'vegData')"></i></td></tr>`).join('');
-            let h = JSON.parse(localStorage.getItem('hireData') || '[]');
-            document.getElementById('hList').innerHTML = h.map((item, i) => `<tr><td>${item.d}</td><td>${item.ds}</td><td>BOOKED</td><td><i class="fas fa-trash" style="color:red; cursor:pointer" onclick="remove(${i},'hireData')"></i></td></tr>`).join('');
-        }
-        render();
+        function deleteHire(id) { db.ref('hireData').child(id).remove(); }
     </script>
 </body>
 </html>
