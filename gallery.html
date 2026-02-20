@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Fleet Gallery | Samansiri Group</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        /* --- HEADER --- */
+        .gallery-header {
+            padding: 60px 20px;
+            text-align: center;
+            background: #f9f9f9;
+        }
+
+        .gallery-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .back-home {
+            text-decoration: none;
+            color: #666;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .back-home:hover { color: #2ecc71; }
+
+        /* --- FILTER BUTTONS --- */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            border: 2px solid #eee;
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        /* --- GALLERY GRID --- */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            height: 250px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.4s;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px;
+            color: white;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .gallery-item:hover .overlay {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .gallery-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gallery-header">
+        <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+        <h1>Our Fleet Gallery</h1>
+        <p>A closer look at Samansiri Travels & Logistics</p>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterSelection('all')">All Vehicles</button>
+        <button class="filter-btn" onclick="filterSelection('bus')">Mitsubishi Rosa</button>
+        <button class="filter-btn" onclick="filterSelection('lorry')">Lorry Service</button>
+    </div>
+
+    <div class="gallery-container">
+        <div class="gallery-item bus">
+            <img src="bus1.jpg" alt="Samansiri Bus Exterior">
+            <div class="overlay">Exterior - Mitsubishi Rosa</div>
+        </div>
+        <div class="gallery-item bus">
+            <img src="hero-image.jpg" alt="Full Fleet">
+            <div class="overlay">Our Achievement - The Full Fleet</div>
+        </div>
+
+        <div class="gallery-item lorry">
+            <img src="lorry1.jpg" alt="Samansiri Lorry">
+            <div class="overlay">Logistics & Goods Transport</div>
+        </div>
+    </div>
+
+    <script>
+        function filterSelection(c) {
+            var x, i;
+            x = document.getElementsByClassName("gallery-item");
+            if (c == "all") c = "";
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+                if (x[i].className.indexOf(c) > -1) {
+                    x[i].style.display = "block";
+                }
+            }
+            
+            // Highlight active button
+            var btns = document.getElementsByClassName("filter-btn");
+            for (var j = 0; j < btns.length; j++) {
+                btns[j].classList.remove("active");
+            }
+            event.currentTarget.classList.add("active");
+        }
+    </script>
+
+</body>
+</html>

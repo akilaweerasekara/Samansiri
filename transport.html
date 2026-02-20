@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet & Hires | Samansiri Travels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --blue: #2980b9; --dark: #1a1a2e; }
+        body { font-family: 'Poppins', sans-serif; background: #fdfdfd; margin: 0; }
+        .hero { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-image.jpg'); background-size: cover; padding: 100px 20px; text-align: center; color: white; }
+        .container { max-width: 1100px; margin: 50px auto; padding: 0 20px; }
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 80px; }
+        .vehicle-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .vehicle-card img { width: 100%; height: 220px; object-fit: cover; }
+        .v-content { padding: 25px; }
+        .booking-calendar { background: white; border-radius: 25px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); margin-bottom: 50px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; border-bottom: 2px solid #eee; }
+        td { padding: 20px 15px; border-bottom: 1px solid #f9f9f9; }
+        .status-tag { background: #fee2e2; color: #ef4444; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
+        .check-box { background: #ebf5fb; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 40px; border: 2px dashed var(--blue); }
+        .input-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        input { padding: 12px; border-radius: 10px; border: 1px solid #ddd; }
+        .btn-check { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Premium Fleet Services</h1>
+        <p>Luxury Travel & Reliable Logistics Across Sri Lanka</p>
+        <a href="index.html" style="color:white; text-decoration:none; opacity:0.7">← Back to Home</a>
+    </div>
+
+    <div class="container">
+        <div class="check-box">
+            <h3><i class="fas fa-calendar-check"></i> Check Instant Availability</h3>
+            <p>Select your date and destination to see if we are free for a hire.</p>
+            <div class="input-group">
+                <input type="date" id="checkDate">
+                <input type="text" id="checkDest" placeholder="Destination (e.g. Ella)">
+                <button class="btn-check" onclick="verifyBooking()">Check Availability</button>
+            </div>
+            <div id="checkResult" style="margin-top: 20px; font-weight: 600;"></div>
+        </div>
+
+        <div class="fleet-grid">
+            <div class="vehicle-card">
+                <img src="bus1.jpg" alt="Mitsubishi Rosa">
+                <div class="v-content">
+                    <h3>Mitsubishi Rosa Luxury</h3>
+                    <p>29 Seater, Full A/C, Adjustable Seats. Perfect for Weddings & Family Trips.</p>
+                </div>
+            </div>
+            <div class="vehicle-card">
+                <img src="lorry1.jpg" alt="Lorry">
+                <div class="v-content">
+                    <h3>Heavy Duty Logistics</h3>
+                    <p>Reliable goods transport from Economic Centers to any destination.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-calendar">
+            <div class="section-title">
+                <h2>Live Booking Calendar</h2>
+                <p>Dates currently reserved in our schedule</p>
+            </div>
+            <div id="hireDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        function verifyBooking() {
+            let d = document.getElementById('checkDate').value;
+            let dest = document.getElementById('checkDest').value;
+            let res = document.getElementById('checkResult');
+            if(!d || !dest) { res.innerHTML = "Please enter both date and destination."; return; }
+
+            let hires = JSON.parse(localStorage.getItem('hireData') || '[]');
+            let isBooked = hires.some(h => h.d === d);
+
+            if(isBooked) {
+                res.innerHTML = `<span style="color:#e74c3c">❌ Sorry, we are booked on ${d}. Try another date!</span>`;
+            } else {
+                let waMsg = encodeURIComponent(`Hi Samansiri Travels, I checked your website. Is the date ${d} available for a hire to ${dest}?`);
+                res.innerHTML = `<span style="color:#27ae60">✅ We are AVAILABLE!</span><br><br>
+                <a href="https://wa.me/94777105620?text=${waMsg}" style="background:#25D366; color:white; padding:10px 20px; border-radius:10px; text-decoration:none;">Book via WhatsApp</a>`;
+            }
+        }
+
+        function load(){
+            let hires = JSON.parse(localStorage.getItem('hireData') || '[]');
+            if(hires.length === 0){
+                document.getElementById('hireDisplay').innerHTML = "<h3 style='text-align:center; color:#27ae60;'>All dates are currently available!</h3>";
+                return;
+            }
+            let html = `<table><thead><tr><th>Date</th><th>Route/Hire Detail</th><th>Availability</th></tr></thead><tbody>`;
+            hires.sort((a,b)=> new Date(a.d) - new Date(b.d)).forEach(h => {
+                html += `<tr><td><strong>${h.d}</strong></td><td>${h.ds}</td><td><span class="status-tag">RESERVED</span></td></tr>`;
+            });
+            html += `</tbody></table>`;
+            document.getElementById('hireDisplay').innerHTML = html;
+        }
+        window.onload = load;
+    </script>
+</body>
+</html>
